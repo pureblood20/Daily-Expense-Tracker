@@ -4,28 +4,43 @@ import { useExpenseContext } from "../Context/expense.context";
 import Select from "react-select";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { category } from "../Utility/Constants";
+import { useDispatch } from "react-redux";
+import {
+  displayExpense,
+  clearExpense,
+} from "../Features/ExpenseReducer/expenseSlice";
+import { useSelector } from "react-redux";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ExpenseTable = () => {
-  const {
-    displayExpense,
-    displayExpenseTable,
-    setSelectedMonth,
-    selectedMonth,
-    category,
-    setSelectedCategory,
-    selectedCategory,
-    totalAmount,
-    setDisplayExpenseTable,
-  } = useExpenseContext();
+  // const {
+  //   displayExpense,
+  //   displayExpenseTable,
+  //   setSelectedMonth,
+  //   selectedMonth,
+  //   category,
+  //   setSelectedCategory,
+  //   selectedCategory,
+  //   totalAmount,
+  //   setDisplayExpenseTable,
+  // } = useExpenseContext();
+  const dispatch = useDispatch();
+
+  const [selectedMonth, setSelectedMonth] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [totalAmount, setTotalAmount] = useState("");
+  const expense = useSelector((state) => state.expenseState.expense);
+  console.log(expense, "table");
+  const email = "shiv@gmail.com";
 
   const data = {
-    labels: displayExpenseTable.map((data) => data.category),
+    labels: expense?.map((data) => data.category),
     datasets: [
       {
         label: "Expenses",
-        data: displayExpenseTable.map((data) => data.amount),
+        data: expense?.map((data) => data.amount),
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(54, 162, 235, 0.2)",
@@ -65,7 +80,7 @@ const ExpenseTable = () => {
   // const [selectedMonths, setSelectedMonths] = useState([]);
 
   const handleChange = (selectedOption) => {
-    setDisplayExpenseTable([]);
+    dispatch(clearExpense());
     setSelectedMonth(selectedOption);
   };
 
@@ -74,11 +89,11 @@ const ExpenseTable = () => {
   const handleClear = () => {
     setSelectedCategory("");
     setSelectedMonth("");
-    setDisplayExpenseTable([]);
+    dispatch(clearExpense());
   };
 
   useEffect(() => {
-    displayExpense();
+    dispatch(displayExpense({ selectedMonth, selectedCategory, email }));
   }, [selectedCategory, selectedMonth]);
 
   return (
@@ -96,14 +111,14 @@ const ExpenseTable = () => {
       <select
         className="select select-bordered w-full max-w-xs"
         onChange={(e) => {
-          setDisplayExpenseTable([]);
+          dispatch(clearExpense());
           setSelectedCategory(e.target.value);
         }}
       >
         <option disabled selected>
           Select Category
         </option>
-        {category.map((option) => (
+        {category?.map((option) => (
           <option key={option} value={option}>
             {option}
           </option>
@@ -112,7 +127,7 @@ const ExpenseTable = () => {
       <button className="btn btn-primary" onClick={handleClear}>
         Clear
       </button>
-      {displayExpenseTable.length === 0 ? (
+      {expense?.length === 0 ? (
         <>
           <div>No data available</div>
         </>
@@ -129,7 +144,7 @@ const ExpenseTable = () => {
               </tr>
             </thead>
 
-            {displayExpenseTable.map((item) => {
+            {expense?.map((item) => {
               sno++;
 
               return (
@@ -149,9 +164,9 @@ const ExpenseTable = () => {
           </div>
         </div>
       )}
-      <div className="h-96">
-        <Pie data={data} />
-      </div>
+      {/* <div className="h-96">
+            <Pie data={data} />
+          </div> */}
     </div>
   );
 };

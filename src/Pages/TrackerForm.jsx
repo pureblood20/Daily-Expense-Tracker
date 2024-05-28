@@ -1,9 +1,25 @@
-import { useExpenseContext } from "../Context/expense.context";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addExpense } from "../Features/ExpenseReducer/expenseSlice";
+import { useState } from "react";
+import { category } from "../Utility/Constants";
 
 const TrackerForm = () => {
-  const { category, expenseDetails, setExpenseDetails, addExpense } =
-    useExpenseContext();
+  // const { category, expenseDetails, setExpenseDetails, addExpense } =
+  //   useExpenseContext();
+  const [expenseDetails, setExpenseDetails] = useState({
+    email: "shiv@gmail.com",
+
+    amount: "",
+
+    category: "",
+
+    date: "",
+
+    title: "",
+  });
+
+  const dispatch = useDispatch();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -17,7 +33,8 @@ const TrackerForm = () => {
       return;
     }
     try {
-      addExpense();
+      // addExpense();
+      dispatch(addExpense({ expenseDetails }));
       toast.success("Success!!");
 
       setExpenseDetails({

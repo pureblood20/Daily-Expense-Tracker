@@ -6,17 +6,6 @@ import { db } from "../firebase.config";
 const appContext = createContext();
 
 const AppProvider = ({ children }) => {
-  const category = [
-    "Education",
-    "Health",
-    "Travel",
-    "Shopping",
-    "Entertainment",
-    "Food",
-    "Groceries",
-    "Others",
-  ];
-
   const [expenseDetails, setExpenseDetails] = useState({
     email: "shiv@gmail.com",
 
@@ -45,8 +34,8 @@ const AppProvider = ({ children }) => {
 
   const displayExpense = async () => {
     let q;
-    console.log("blahhhhh");
-    if (selectedCategory && !selectedMonth.length) {
+
+    if (selectedCategory && !selectedMonth?.length) {
       q = query(
         collection(db, "Expense"),
 
@@ -61,7 +50,7 @@ const AppProvider = ({ children }) => {
       });
       setDisplayExpenseTable((n) => [...n, ...data]);
       return;
-    } else if (selectedMonth.length) {
+    } else if (selectedMonth?.length) {
       selectedMonth.map(async (item) => {
         let month = item.value;
 
